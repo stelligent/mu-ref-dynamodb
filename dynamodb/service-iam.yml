@@ -1,0 +1,42 @@
+---
+Parameters:
+  Environment:
+    Type: String
+Resources:
+  DynamoDBAdmin:
+    Type: AWS::IAM::Policy
+    DependsOn:
+        - EcsServiceRole
+    Properties:
+      Roles:
+        - "Fn::Sub": mu-cloudformation-common-${AWS::Region}
+      PolicyName: dbadmin
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:Describe*"
+              - "dynamodb:CreateTable"
+              - "dynamodb:UpdateTable"
+              - "dynamodb:DeleteTable"
+              - "dynamodb:List*"
+              - "dynamodb:TagResource"
+              - "dynamodb:UntagResource"
+            Resource: "*"
+  DynamoDBAccess:
+    Type: AWS::IAM::Policy
+    DependsOn:
+        - EcsServiceRole
+    Properties:
+      Roles:
+        - "Fn::Sub": mu-service-timercheck-${Environment}-task-${AWS::Region}
+      PolicyName: dbreadwrite
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:PutItem"
+              - "dynamodb:GetItem"
+            Resource: "*"

@@ -1,0 +1,38 @@
+environments:
+- name: acceptance
+- name: production
+service:
+  name: timercheck
+  environment:
+    REGION: ${AWS::Region}
+    TABLE_NAME:
+      acceptance: timers-acceptance
+      production: timers-production
+  port: 8080
+  healthEndpoint: /
+  pathPatterns:
+  - /*
+  pipeline:
+    source:
+      repo: stelligent/mu-ref-dynamodb
+
+parameters:
+  # parameters for the DynamoDB extension
+  mu-service-timercheck-acceptance:
+    TableName: timers-acceptance
+    WriteCapacityThroughput: 2
+    ReadCapacityThroughput: 2
+  mu-iam-service-timercheck-acceptance:
+    Environment: acceptance
+  mu-service-timercheck-production:
+    TableName: timers-production
+    WriteCapacityThroughput: 4
+    ReadCapacityThroughput: 4
+  mu-iam-service-timercheck-production:
+    Environment: production
+  # override MuImage to allow for multi-stage Dockerfile
+  mu-pipeline-timercheck:
+    MuImage: "aws/codebuild/docker:17.09.0"
+
+extensions:
+  - url: dynamodb

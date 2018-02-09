@@ -1,0 +1,25 @@
+---
+Parameters:
+  TableName:
+    Type: String
+  ReadCapacityThroughput:
+    Type: Number
+  WriteCapacityThroughput:
+    Type: Number
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+          Ref: TableName
+      AttributeDefinitions:
+        - AttributeName: Timer
+          AttributeType: S
+      KeySchema:
+        - KeyType: HASH
+          AttributeName: Timer
+      ProvisionedThroughput:
+        WriteCapacityUnits:
+          Ref: WriteCapacityThroughput
+        ReadCapacityUnits:
+          Ref: ReadCapacityThroughput
